@@ -1,8 +1,8 @@
 # crudcast
 
-Crudcast lets you build a fully functioning RESTful CRUD API with a few lines of YAML code.
+Crudcast lets you build a fully functioning RESTful CRUD API with a few lines of YAML code. It lets you create a fully-functional web app backend for prototyping purposes
 
-## Usage
+## Configuration
 
 Clone this repository
 ```
@@ -28,3 +28,34 @@ models:
         type: number
 
 ```
+
+## Usage
+
+Start the app
+```
+python views.py
+```
+
+Create a new person object
+```
+import requests
+import json
+
+url = "http://localhost:5000/api/person/"
+
+payload = {
+  "first_name": "Chris",
+  "last_name": "Davies"
+}
+headers = {
+  'Content-Type': "application/json",
+}
+
+response = requests.request("POST", url, data=json.dumps(payload), headers=headers)
+
+print(response.text)
+
+{"_id":"5c06c4137ba4a105ff0427cf","first_name":"Chris","last_name":"Davies"}
+
+```
+
