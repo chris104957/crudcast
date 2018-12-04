@@ -58,8 +58,6 @@ def get_models():
     """
     Populates the model list from the yaml config
     """
-    # TODO: validate that each model name is unique, and that it contains no spaces
-
     models = {}
 
     for model_name, options in config['models'].items():

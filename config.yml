@@ -10,10 +10,19 @@ models:
         required: true
       num:
         type: autofield
+      test:
+        type: boolean
+        required: true
+      auto_date:
+        type: auto_datetime
+      auto_date_2:
+        type: auto_datetime
+        create_only: true
+      many:
+        type: manytomany
+        to: object_two
 
   object_two:
     fields:
       name:
-      object_one:
-        type: foreignkey
-        to: object_one
+

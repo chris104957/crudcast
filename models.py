@@ -2,7 +2,8 @@ from utils import get_models, is_jsonable
 from exceptions import ValidationError
 from pymongo.collection import ObjectId
 from fields import (
-    StringField, NumberField, DateTimeField, BooleanField, ForeignKeyField, AutoField
+    StringField, NumberField, DateTimeField, BooleanField, ForeignKeyField, AutoField, AutoDateTimeField,
+    ManyToManyField
 )
 from flask import abort
 
@@ -32,7 +33,9 @@ class Model(object):
             'datetime': DateTimeField,
             'boolean': BooleanField,
             'foreignkey': ForeignKeyField,
-            'autofield': AutoField
+            'autofield': AutoField,
+            'auto_datetime': AutoDateTimeField,
+            'manytomany': ManyToManyField
         }
 
         for field_name, options in fields.items():
@@ -75,7 +78,7 @@ class Model(object):
         auto_fields = [field for field in self.fields if field.auto]
 
         for f in auto_fields:
-            data[f.name] = f.set(created=not _id)
+            data[f.name] = f.set(_id=_id)
 
         return data
 

@@ -47,11 +47,22 @@ class AutoBaseField(BaseField):
     """
     auto = True
 
-    def set(self, created=False):
+    def get_original(self, _id):
+        """
+        Helper function that returns the original value of the object, before it is updated. If you want to leave a
+        value unchanged on update, the `.set()` method should call and return this function (otherwise the field
+        value will be set to `None`)
+
+        :param _id: the object id as a string
+        """
+        obj = self.model.to_repr(_id=ObjectId(_id))[0]
+        return obj[self.name]
+
+    def set(self, _id=None):
         """
         This method must be extended by all child classes. If it returns None, the value will not be changed
 
-        :param created: determines whether or not the object is being created or updated
+        :param _id: If an object is being updated, the _id will be provided
         """
         raise NotImplementedError()
 
@@ -125,12 +136,30 @@ class AutoField(AutoBaseField):
     extend this must implement the `.set()` method
     """
 
-    def set(self, created=False):
+    def set(self, _id=None):
         """
         Returns the collection length + 1 when the object is created
         """
-        if created:
+        if _id:
+            return self.get_original(_id)
+        else:
             return self.model.collection.find().count() + 1
+
+
+class AutoDateTimeField(AutoBaseField):
+    def __init__(self, name, model, **options):
+        """
+        Automatically populates the current time at the moment of saving the object. If `create_only` is `True`,
+        then the field only gets set when the document is created
+        """
+        super(AutoDateTimeField, self).__init__(name, model, **options)
+        self.create_only = options.get('create_only', False)
+
+    def set(self, _id=None):
+        if not self.create_only or not _id:
+            return datetime.utcnow()
+        else:
+            return self.get_original(_id)
 
 
 class BooleanField(BaseField):
@@ -173,6 +202,17 @@ class ForeignKeyField(BaseField):
         except InvalidId:
             raise ValidationError('Invalid id', field=self.name)
         except NotFound:
-            raise ValidationError('Cannot find %s with that ID' % self.related.name, field=self.name)
+            raise ValidationError('Cannot find %s with ID %s' % (self.related.name, data), field=self.name)
+
+        return data
+
+
+class ManyToManyField(ForeignKeyField):
+    def validate(self, data, _id=None):
+        """
+        Checks to see if a document in the related model's collection matches the ID provided as `data`
+        """
+        for d in data:
+            super().validate(d, _id=_id)
 
         return data
