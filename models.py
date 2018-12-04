@@ -1,7 +1,10 @@
 from utils import get_models, is_jsonable
 from exceptions import ValidationError
 from pymongo.collection import ObjectId
-from fields import StringField, NumberField, DateTimeField, BooleanField, ForeignKeyField
+from fields import (
+    StringField, NumberField, DateTimeField, BooleanField, ForeignKeyField, AutoField
+)
+from flask import abort
 
 models = get_models()
 
@@ -28,7 +31,8 @@ class Model(object):
             'number': NumberField,
             'datetime': DateTimeField,
             'boolean': BooleanField,
-            'foreignkey': ForeignKeyField
+            'foreignkey': ForeignKeyField,
+            'autofield': AutoField
         }
 
         for field_name, options in fields.items():
@@ -50,7 +54,7 @@ class Model(object):
     def get_field_by_name(self, key):
         return list(filter(lambda x: x.name == key, self.fields))[0]
 
-    def validate(self, data):
+    def validate(self, data, _id=None):
         # ensure that required fields are supplied
         required_fields = [field.name for field in self.fields if field.required]
         for f in required_fields:
@@ -66,7 +70,12 @@ class Model(object):
 
             # perform field-level validation
             field = self.get_field_by_name(key)
-            field.validate(val)
+            field.validate(val, _id=_id)
+
+        auto_fields = [field for field in self.fields if field.auto]
+
+        for f in auto_fields:
+            data[f.name] = f.set(created=not _id)
 
         return data
 
@@ -89,7 +98,10 @@ class Model(object):
         return response
 
     def retrieve(self, _id):
-        return self.to_repr(_id=ObjectId(_id))[0]
+        if self.exists(_id):
+            return self.to_repr(_id=ObjectId(_id))[0]
+        else:
+            abort(404)
 
     def create(self, data):
         data = self.validate(data)
@@ -97,6 +109,26 @@ class Model(object):
         return self.retrieve(obj.inserted_id)
 
     def update(self, _id, data):
-        data = self.validate(data)
+        if not self.exists(_id):
+            abort(404)
+
+        data = self.validate(data, _id=_id)
         self.collection.find_one_and_update({'_id': ObjectId(_id)}, {'$set': data})
         return self.retrieve(_id)
+
+    def exists(self, _id):
+        """
+        Check to see if a document with a given ID exists
+
+        :param _id: the id to check
+        :type _id: str
+        :rtype: bool
+        """
+        return self.collection.find({'_id': ObjectId(_id)}).count() == 1
+
+    def delete(self, _id):
+        if self.exists(_id):
+            self.collection.find_one_and_delete({'_id': ObjectId(_id)})
+            return {}
+        else:
+            abort(404)

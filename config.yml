@@ -1,9 +1,19 @@
 models:
-  object:
+  object_one:
     fields:
       name:
-      number:
+        unique: true
+      space field:
+        required: true
+      age:
         type: number
-      datetime:
-        type: datetime
-        format_string:
+        required: true
+      num:
+        type: autofield
+
+  object_two:
+    fields:
+      name:
+      object_one:
+        type: foreignkey
+        to: object_one

@@ -10,3 +10,7 @@ class ValidationError(Exception):
 
     def to_dict(self):
         return {self.field: self.message}
+
+
+class ConfigException(Exception):
+    pass
