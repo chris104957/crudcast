@@ -1,9 +1,9 @@
-
 models:
-  person:
+  object:
     fields:
-      first_name:
-      last_name:
-      age:
+      name:
+      number:
         type: number
-        required: true
+      datetime:
+        type: datetime
+        format_string:

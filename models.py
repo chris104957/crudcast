@@ -1,49 +1,34 @@
-from utils import get_models, _, is_jsonable
+from utils import get_models, is_jsonable
 from exceptions import ValidationError
 from pymongo.collection import ObjectId
+from fields import StringField, NumberField, DateTimeField, BooleanField, ForeignKeyField
+
 models = get_models()
-
-
-class BaseField(object):
-    def __init__(self, name, **options):
-        self.name = name
-        self.required = options.get('required', False)
-
-    def validate(self, data):
-        raise NotImplementedError()
-
-
-class StringField(BaseField):
-    def validate(self, data):
-        try:
-            assert isinstance(data, str)
-        except AssertionError:
-            raise ValidationError('Input must be a string', field=self.name)
-
-        return data
-
-
-class NumberField(BaseField):
-    def validate(self, data):
-        try:
-            assert isinstance(data, (int, float, complex))
-        except AssertionError:
-            raise ValidationError('Input must be numeric', field=self.name)
-
-        return data
 
 
 class Model(object):
     def __init__(self, name):
+        """
+        A model object - effectively a schema for the mondodb
+
+        :param name: model name
+        """
+        self.name = name
         self.object = models[name]
         self.collection = self.object['collection']
         self.fields = self.set_fields(self.object['fields'])
 
     def set_fields(self, fields):
+        """
+        Sets the list of fields
+        """
         cleaned_fields = []
         field_types = {
             'string': StringField,
-            'number': NumberField
+            'number': NumberField,
+            'datetime': DateTimeField,
+            'boolean': BooleanField,
+            'foreignkey': ForeignKeyField
         }
 
         for field_name, options in fields.items():
@@ -52,7 +37,7 @@ class Model(object):
 
             field_type = field_types[options.get('type', 'string')]
 
-            field = field_type(name=field_name, **options)
+            field = field_type(name=field_name, model=self, **options)
 
             cleaned_fields.append(field)
 
@@ -95,7 +80,7 @@ class Model(object):
             obj = {}
             for key, val in item.items():
                 if is_jsonable(val):
-                   obj[key] = val
+                    obj[key] = val
                 else:
                     obj[key] = str(val)
 
@@ -103,17 +88,15 @@ class Model(object):
 
         return response
 
-    def retrieve(self, id):
-        return self.to_repr(_id=ObjectId(id))[0]
+    def retrieve(self, _id):
+        return self.to_repr(_id=ObjectId(_id))[0]
 
     def create(self, data):
         data = self.validate(data)
         obj = self.collection.insert_one(data)
         return self.retrieve(obj.inserted_id)
 
-    def update(self, id, data):
+    def update(self, _id, data):
         data = self.validate(data)
-        self.collection.find_one_and_update({'_id': ObjectId(id)}, {'$set': data})
-        return self.retrieve(id)
-
-
+        self.collection.find_one_and_update({'_id': ObjectId(_id)}, {'$set': data})
+        return self.retrieve(_id)
