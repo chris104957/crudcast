@@ -37,7 +37,7 @@ python views.py
 ```
 
 Create a new person object
-```
+```python
 import requests
 import json
 
