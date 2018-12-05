@@ -7,18 +7,22 @@ from fields import (
 )
 from flask import abort
 
+
 models = get_models()
 
 
 class Model(object):
     def __init__(self, name):
         """
-        A model object - effectively a schema for the mondodb
+        A model object - effectively a schema for the mongodb
 
         :param name: model name
         """
         self.name = name
-        self.object = models[name]
+        try:
+            self.object = models[name]
+        except KeyError:
+            abort(404)
         self.collection = self.object['collection']
         self.fields = self.set_fields(self.object['fields'])
 

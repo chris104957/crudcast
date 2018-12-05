@@ -1,28 +1,9 @@
 models:
-  object_one:
+  person:
     fields:
-      name:
-        unique: true
-      space field:
+      first_name:
+        required: true
+      last_name:
         required: true
       age:
         type: number
-        required: true
-      num:
-        type: autofield
-      test:
-        type: boolean
-        required: true
-      auto_date:
-        type: auto_datetime
-      auto_date_2:
-        type: auto_datetime
-        create_only: true
-      many:
-        type: manytomany
-        to: object_two
-
-  object_two:
-    fields:
-      name:
-

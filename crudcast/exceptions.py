@@ -1,4 +1,7 @@
-class ValidationError(Exception):
+from werkzeug.exceptions import BadRequest
+
+
+class ValidationError(BadRequest):
     status_code = 400
 
     def __init__(self, message, field=None, status_code=None):
