@@ -10,6 +10,7 @@ setup(
     name=name,
     version=version,
     packages=find_packages(),
+    package_data={'crudcast': ['requirements.txt']},
     include_package_data=True,
     license='Apache Software License',
     long_description='',
@@ -30,7 +31,6 @@ setup(
         'PyYAML==3.13',
         'Werkzeug==0.14.1'
     ],
-
     entry_points={
         'console_scripts': ['crudcast=crudcast.entrypoint:main'],
     }
