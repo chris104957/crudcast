@@ -13,7 +13,7 @@ script:
 #  - coveralls
 deploy:
   - provider: pypi
-    user: "chris104957"
+    user: "chris140957"
     password:
       secure: muN/0oz8jsavBWEVoW9D7J2GjeYp8huEv12TDpn7awxZuRJxCfg772k5lUoq2Po84D3Ix88gbmfnaI4NWfifUZdImY1UW90JK6FEl6DuqUtimaSsvQdzVtIhTLIU1n3sKUb5nt7gS5myqzsUH7tM+y5q9l5pOnPdoA1G7tMoCq0X7tLochCVpx54pzq8+TobhfsShyaPGUPfELGL7S12QqcwLqfJqIEy8savSW7GJYxTSARRUaDzMSufzM618lLeVY6ZmzXBul4FoZ0ZCNxNi/O/UlkfichhAT14ViQXEuUCGyL6kVfoqaUgElKR1n2dRfga0uT5GCH7Vl6prz4raU4wa92jMpI/ZLX99utxBBUYyZN3fqKDOUmIsj5V7UvCvTklZrX0lBf7z6KeWdFvrf1kEn71ZDgH6vqXZAMiOK9+0m6QwN8uEqo+S8OtF8DIHfy0HcW0bsQDXPCDfhjhbRFmnvUQJsRoXlODOCUsE/rvpZ7T3QE/rWgXakXGbFnoji4xM39ugkkLdEUgnUC2OOHiSotumXMTQ4gBn6scsLcYDoWdZFN8nE7+57zvZS02vjccldmIqCVpnN8Av9NCl2UzvPOFqqXyQhFq2XSYg81pAAABuS7X51bEUealAgO7r5vnqaqKg5E/gP0ShNHZEmg9QvPfQPtj/wKNeyeV0BI=
     on:
