@@ -1,7 +1,6 @@
 import json
 from yaml import load
 import pymongo
-from exceptions import ConfigException
 
 
 with open('config.yml', 'r') as f:

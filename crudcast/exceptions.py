@@ -1,4 +1,9 @@
 from werkzeug.exceptions import BadRequest
+from flask import jsonify
+
+
+def handle_invalid_usage(error):
+    return jsonify(error.to_dict()), error.status_code
 
 
 class ValidationError(BadRequest):

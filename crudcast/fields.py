@@ -1,5 +1,5 @@
 from datetime import datetime
-from exceptions import ValidationError
+from .exceptions import ValidationError
 from pymongo.collection import ObjectId
 from bson.errors import InvalidId
 from werkzeug.exceptions import NotFound
@@ -7,6 +7,7 @@ from werkzeug.exceptions import NotFound
 
 class BaseField(object):
     auto = False
+    type = ''
 
     def __init__(self, name, model, **options):
         """
@@ -71,6 +72,8 @@ class AutoBaseField(BaseField):
 
 
 class StringField(BaseField):
+    type = 'string'
+
     def __init__(self, name, **options):
         """
         String input field
@@ -120,6 +123,9 @@ class NumberField(BaseField):
     """
     Numeric input field.
     """
+
+    type = 'number'
+
     def validate(self, data, _id=None):
         data = super().validate(data, _id=_id)
         try:
@@ -163,6 +169,8 @@ class AutoDateTimeField(AutoBaseField):
 
 
 class BooleanField(BaseField):
+    type = 'boolean'
+
     def validate(self, data, _id=None):
         """
         Checks that the input value is a Boolean
@@ -176,9 +184,11 @@ class BooleanField(BaseField):
 
 
 class ForeignKeyField(BaseField):
+    type = 'object'
+
     @staticmethod
     def get_related(related_model_name):
-        from models import Model
+        from .models import Model
         return Model(name=related_model_name)
 
     def __init__(self, name, model, **options):
@@ -208,6 +218,8 @@ class ForeignKeyField(BaseField):
 
 
 class ManyToManyField(ForeignKeyField):
+    type = 'array'
+
     def validate(self, data, _id=None):
         """
         Checks to see if a document in the related model's collection matches the ID provided as `data`

@@ -1,7 +1,7 @@
-from utils import get_models, is_jsonable
-from exceptions import ValidationError
+from .utils import get_models, is_jsonable
+from .exceptions import ValidationError
 from pymongo.collection import ObjectId
-from fields import (
+from .fields import (
     StringField, NumberField, DateTimeField, BooleanField, ForeignKeyField, AutoField, AutoDateTimeField,
     ManyToManyField
 )
@@ -25,6 +25,7 @@ class Model(object):
             abort(404)
         self.collection = self.object['collection']
         self.fields = self.set_fields(self.object['fields'])
+        self.options = self.object.get('options', {})
 
     def set_fields(self, fields):
         """
@@ -61,7 +62,11 @@ class Model(object):
     def get_field_by_name(self, key):
         return list(filter(lambda x: x.name == key, self.fields))[0]
 
-    def validate(self, data, _id=None):
+    def validate(self, data=None, _id=None):
+        # prevent 500 error on empty payload
+        if not data:
+            data = {}
+
         # ensure that required fields are supplied
         required_fields = [field.name for field in self.fields if field.required]
         for f in required_fields:
@@ -87,7 +92,13 @@ class Model(object):
         return data
 
     def find(self, **query):
-        return self.collection.find(query)
+        q = {}
+        for key, val in query.items():
+            try:
+                q[key] = ''.join(val)
+            except TypeError:
+                q[key] = val
+        return self.collection.find(q)
 
     def to_repr(self, **query):
         items = self.find(**query)

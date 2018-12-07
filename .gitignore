@@ -2,4 +2,4 @@ venv
 .idea
 config.yml
 dist
-django_carrot.egg-info
+crudcast.egg-info

@@ -15,11 +15,6 @@ setup(
     long_description='',
     author='Christopher Davies',
     author_email='christopherdavies553@gmail.com',
-    home_page='https://github.com/chris104957/crudcast',
-    project_urls={
-        'Source': 'https://github.com/chris104957/crudcast',
-    },
-
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
         'Operating System :: OS Independent',
@@ -34,5 +29,9 @@ setup(
         'pymongo==3.7.2',
         'PyYAML==3.13',
         'Werkzeug==0.14.1'
-    ]
+    ],
+
+    entry_points={
+        'console_scripts': ['crudcast=crudcast.entrypoint:main'],
+    }
 )

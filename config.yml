@@ -1,9 +1,18 @@
 models:
-  person:
+  publisher:
     fields:
-      first_name:
-        required: true
-      last_name:
-        required: true
-      age:
-        type: number
+      name:
+      authors:
+        type: manytomany
+        to: author
+
+  author:
+    fields:
+      name:
+
+  book:
+    fields:
+      name:
+      author:
+        type: foreignkey
+        to: author
