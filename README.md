@@ -1,17 +1,13 @@
 # crudcast
 
-Crudcast lets you build a fully functioning RESTful CRUD API with a few lines of YAML code. It lets you create a fully-functional web app backend for prototyping purposes
+Crudcast lets you build a fully functioning and OpenAPI-compliant CRUD API with a few lines of YAML code. It lets you create a fully-functional web app backend for prototyping purposes
 
-## Configuration
+## Installation
 
-Clone this repository
-```
-git clone https://github.com/chris104957/crudcast.git
-```
+Install with pip
 
-cd into the folder
 ```
-cd crudcast
+pip install crudcast
 ```
 
 Create a config file, `config.yml`, in the same folder
@@ -32,93 +28,24 @@ models:
 Usage
 ---
 
-Start the app
+CD into the folder containing your `config.yml`, and run this command
 ```
-python views.py
+crudcast
 ```
+Go to `http://localhost:5000/api/docs` to see your documented and fully-functional API
 
-Create a new person object
-```python
-import requests
-import json
-
-url = "http://localhost:5000/api/person/"
-
-payload = {
-  "first_name": "Chris",
-  "last_name": "Davies"
-}
-headers = {
-  'Content-Type': "application/json",
-}
-
-response = requests.post(url, data=json.dumps(payload), headers=headers)
-
-print(response.text)
-{"_id":"5c06c4137ba4a105ff0427cf","first_name":"Chris","last_name":"Davies"}
-
-```
-
-List all person objects
+Documentation
 ---
 
-```python
-import requests
-import json
-
-url = "http://localhost:5000/api/person/"
-
-headers = {
-  'Content-Type': "application/json",
-}
-
-response = requests.get(url, headers=headers)
-
-print(response.text)
-```
-
-Update an object
----
-
-```python
-import requests
-import json
-
-url = "http://localhost:5000/api/person/5c06c4137ba4a105ff0427cf/"
-
-payload = {
-  "first_name": "Chris",
-  "last_name": "Davies",
-  "age": 33
-}
-headers = {
-  'Content-Type': "application/json",
-}
-
-response = requests.put(url, data=json.dumps(payload), headers=headers)
-
-print(response.text)
-```
-
-Delete an object
----
-
-```python
-import requests
-import json
-
-url = "http://localhost:5000/api/person/5c06c4137ba4a105ff0427cf/"
-
-headers = {
-  'Content-Type': "application/json",
-}
-
-response = requests.delete(url, headers=headers)
-
-print(response.text)
-```
+Coming soon.
 
 Roadmap
 ---
 
-Crudcast is a brand new, and  currently very limited app. I'm planning to add a lot more functionality in the very near future. If you have a feature request, please log an issue
+Crudcast is brand new and only has a small percentage of the intended functionality so far. In future, I am planning to add support for:
+
+- user management and authentication (basic, token-based and social)
+- permissions
+- inserting your own code - either for validation, permissions or creating your own methods
+
+If there is any other functionality you'd like to see added, then please raise an issue
