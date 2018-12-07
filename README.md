@@ -4,7 +4,13 @@ Crudcast lets you build a fully functioning and OpenAPI-compliant CRUD API with 
 
 ## Installation
 
-Install with pip
+Crudcast requires mongodb - install and start as follows:
+```
+brew install mongodb
+brew service start mongodb
+```
+
+Install crudcast
 
 ```
 pip install crudcast
