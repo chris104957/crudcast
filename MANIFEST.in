@@ -1,3 +1,3 @@
 include README.MD
-include crudcast/requirements.txt
+recursive-include crudcast/*
 
