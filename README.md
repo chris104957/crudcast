@@ -43,7 +43,7 @@ Go to `http://localhost:5000/api/docs` to see your documented and fully-function
 Documentation
 ---
 
-Coming soon.
+Please go to http://crudcast.rtfd.io/ for the full docs
 
 Roadmap
 ---
