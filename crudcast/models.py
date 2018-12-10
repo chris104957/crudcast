@@ -1,4 +1,4 @@
-from .utils import get_models, is_jsonable
+from .utils import is_jsonable
 from .exceptions import ValidationError
 from pymongo.collection import ObjectId
 from .fields import (
@@ -8,19 +8,18 @@ from .fields import (
 from flask import abort
 
 
-models = get_models()
-
-
 class Model(object):
-    def __init__(self, name):
+    def __init__(self, name, app):
         """
         A model object - effectively a schema for the mongodb
 
         :param name: model name
         """
         self.name = name
+        self.app = app
+
         try:
-            self.object = models[name]
+            self.object = self.app.models[name]
         except KeyError:
             abort(404)
         self.collection = self.object['collection']

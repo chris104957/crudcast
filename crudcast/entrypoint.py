@@ -24,8 +24,6 @@ def main():
     get_api(app)
     app.register_error_handler(ValidationError, handle_invalid_usage)
 
-    # Register blueprint at URL
-    # (URL must match the one given to factory function above)
     app.register_blueprint(app.get_swagger_ui_view(), url_prefix=SWAGGER_URL)
 
     @app.route('/swagger')

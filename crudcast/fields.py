@@ -6,25 +6,36 @@ from werkzeug.exceptions import NotFound
 
 
 class BaseField(object):
-    auto = False
-    type = ''
+    """
+    Base class for field objects. All fields must extend this class
+
+    :param name: Field name.
+    :param model: the Model object to which the field belongs
+    :type model: `models.Model`
+    :param options: field options. The available options vary based on field type. Only the `required` and `unique`
+                    options are implemented at this level
+
+    """
+    auto = False  # if an autofield, this value is `True`
+    type = ''  # used by swagger
 
     def __init__(self, name, model, **options):
-        """
-        Base field object.
-
-        :param name: Field name.
-        :param model: the Model object to which the field belongs
-        :type model: `models.Model`
-        :param options: field options. The available options vary based on field type. Only the `required` and
-        `unique` options are implemented at this level
-        """
         self.name = name
         self.model = model
         self.required = options.get('required', False)
         self.unique = options.get('unique', False)
 
     def validate(self, data, _id=None):
+        """
+        When creating or updating an object. This method validates the inputs
+
+        :param data: data to validate
+        :type data: dict
+        :param _id: ID as a string, or None in case of new objects
+        :type _id: str or None
+
+        :rtype: dict
+        """
         if self.unique:
             query = {self.name: data}
             if _id:
@@ -68,26 +79,30 @@ class AutoBaseField(BaseField):
         raise NotImplementedError()
 
     def validate(self, data, _id=None):
+        """
+        Any attempt to set the value of an auto field will raise a validation error
+        """
         raise ValidationError('Auto fields cannot be set manually', field=self.name)
 
 
 class StringField(BaseField):
+    """
+    String input field
+
+    :param name: field name
+    :param unique: if True, no new documents can be created if there is another document in the collection has the
+                   same value for this field as the one being provided
+    :type unique: Boolean
+    """
+
     type = 'string'
 
     def __init__(self, name, **options):
-        """
-        String input field
-
-        :param name: field name
-        :param unique: if True, no new documents can be created if there is another document in the collection has
-        the same value for this field as the one being provided
-        :type unique: Boolean
-        """
         super(StringField, self).__init__(name, **options)
 
     def validate(self, data, _id=None):
         """
-        Validates that the input value is a string, and performs uniqueness checking if required
+        Validates that the input value is a string
         """
         data = super().validate(data, _id=_id)
         try:
@@ -99,18 +114,22 @@ class StringField(BaseField):
 
 
 class DateTimeField(BaseField):
-    def __init__(self, name, **options):
-        """
-        A field for storing datetime objects
+    """
+    A field for storing datetime objects
 
-        :param name: field name
-        :param format_string: format string to be used for validating input. Defaults to '%Y-%m-%d %H:%M:%S.%f' (ISO
-        format)
-        """
+    :param name: field name
+    :param format_string: format string to be used for validating input. Defaults to '%Y-%m-%d %H:%M:%S.%f' (ISO
+                          format)
+
+    """
+    def __init__(self, name, **options):
         self.format_string = options.get('format_string', '%Y-%m-%d %H:%M:%S.%f')
         super(DateTimeField, self).__init__(name, **options)
 
     def validate(self, data, _id=None):
+        """
+        Validates the input string by asserting that the time format is valid
+        """
         data = super().validate(data, _id=_id)
         try:
             datetime.strptime(data, self.format_string)
@@ -123,10 +142,12 @@ class NumberField(BaseField):
     """
     Numeric input field.
     """
-
     type = 'number'
 
     def validate(self, data, _id=None):
+        """
+        Asserts that the input is numeric
+        """
         data = super().validate(data, _id=_id)
         try:
             assert isinstance(data, (int, float, complex))
@@ -162,6 +183,10 @@ class AutoDateTimeField(AutoBaseField):
         self.create_only = options.get('create_only', False)
 
     def set(self, _id=None):
+        """
+        Sets the field value to the current date/time when the object is created. If the object is being updated,
+        and the value of `self.create_only` is `True`, then the date/time will be updated to the current time
+        """
         if not self.create_only or not _id:
             return datetime.utcnow()
         else:
@@ -169,6 +194,10 @@ class AutoDateTimeField(AutoBaseField):
 
 
 class BooleanField(BaseField):
+    """
+    A simple true/false field
+
+    """
     type = 'boolean'
 
     def validate(self, data, _id=None):
@@ -184,21 +213,26 @@ class BooleanField(BaseField):
 
 
 class ForeignKeyField(BaseField):
+    """
+    A field that points at another collection in the database
+
+    :param name: field name
+    :param model: parent model
+    :param to:  the related model's name
+    """
     type = 'object'
 
-    @staticmethod
-    def get_related(related_model_name):
+    def get_related(self, related_model_name):
+        """
+        Returns the related model
+
+        :param related_model_name: the name of another model in the app
+        :rtype: crudcast.models.Model
+        """
         from .models import Model
-        return Model(name=related_model_name)
+        return Model(name=related_model_name, app=self.model.app)
 
     def __init__(self, name, model, **options):
-        """
-        A field that points at another collection in the database
-
-        :param name: field name
-        :param model: parent model
-        :param to:  the related model's name
-        """
         super(ForeignKeyField, self).__init__(name, model, **options)
         self.related = self.get_related(options['to'])
 
