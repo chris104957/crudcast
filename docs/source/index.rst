@@ -11,6 +11,7 @@ Welcome to Crudcast's documentation!
    :caption: Contents:
 
    getting-started.rst
+   crudcast_command.rst
    config.rst
    fields.rst
    production.rst

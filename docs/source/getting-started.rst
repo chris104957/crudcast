@@ -60,6 +60,11 @@ In the same path as your `config.yml`, open a terminal and run the following com
 
 Your API is now running on port 5000
 
+.. note::
+    To see the full set of available arguments for the `crudcast` command, see `here`_
+
+.. _here: crudcast_command.rst
+
 Using your app
 --------------
 
