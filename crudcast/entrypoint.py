@@ -15,7 +15,7 @@ def main():
 
     args = parser.parse_args()
     config_file = args.config_file
-    import_name = args.import_nam
+    import_name = args.import_name
     host = args.host
 
     try:
