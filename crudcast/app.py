@@ -6,6 +6,13 @@ from .models import Model
 
 
 class CrudcastApp(Flask):
+    """
+    The main Crudcast app object, which extends the Flask app
+
+    :param import_name: The `import_name` parameter for Flask
+    :param config_file: Local path to a valid `config.yml`
+    :param kwargs: additional arguments to be passed to Flask
+    """
     crudcast_config = {
         # database
         "mongo_url": "mongodb://localhost:27017/",
@@ -22,7 +29,7 @@ class CrudcastApp(Flask):
                 'title': 'My Crudcast app'
             }
         }
-    }
+    } #: this is the default crudcast config. Any options supplied in your `config.yml` will overwrite these
 
     models = {}
 
@@ -30,6 +37,11 @@ class CrudcastApp(Flask):
     db = None
 
     def set_crudcast_config(self, config_file):
+        """
+        Overwrites `self.crudcast_config` with the content of the config file
+
+        :param config_file: a local file path to a valid config file
+        """
         with open(config_file, 'r') as f:
             options = load(f.read())
 
@@ -50,12 +62,24 @@ class CrudcastApp(Flask):
             self.models[model_name] = m
 
     def get_tag(self, model):
+        """
+        Returns the tag name/description to be used in the swagger view for each model
+
+        :type model: crudcast.modles.Model
+        :rtype: dict
+        """
         return {
             'name': model.name,
             'description': model.options.get('description')
         }
 
     def get_model_path(self, model):
+        """
+        Generates a path entry for the swagger view for each model
+
+        :type model: crudcast.models.Model
+        :rtype: dict
+        """
         parameters = []
 
         for field in model.fields:
@@ -113,6 +137,12 @@ class CrudcastApp(Flask):
         }
 
     def get_definition(self, model):
+        """
+        Returns the model definition based on the model's fields
+
+        :type model: crudcast.models.Model
+        :rtype: dict
+        """
         definition_properties = {
             '_id': {
                 'type': 'string',
@@ -132,6 +162,12 @@ class CrudcastApp(Flask):
         }
 
     def get_instance_path(self, model):
+        """
+        Returns the path entries for instance level calls such as PUT, DELETE, RETRIEVE
+
+        :type model: crudcast.models.Model
+        :rtype: dict
+        """
         parameters = [
             {
                 'name': '_id',
@@ -209,13 +245,18 @@ class CrudcastApp(Flask):
 
     @property
     def swagger_config(self):
+        """
+        Retrieves the complete swagger configuration
+
+        :rtype: dict
+        """
         config = self.crudcast_config['swagger']
         tags = []
         paths = {}
         definitions = {}
 
         for model_name, model_attrs in self.models.items():
-            model = Model(model_name)
+            model = Model(model_name, self)
             tags.append(self.get_tag(model))
             paths['/%s/' % model_name] = self.get_model_path(model)
             paths['/%s/{_id}/' % model_name] = self.get_instance_path(model)
@@ -228,6 +269,11 @@ class CrudcastApp(Flask):
         return config
 
     def get_swagger_ui_view(self):
+        """
+        Creates a swagger view using `flask_swagger_ui`
+
+        :return: a swagger view
+        """
         return get_swaggerui_blueprint(
             self.crudcast_config['swagger']['url'],
             '/swagger',

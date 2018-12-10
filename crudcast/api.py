@@ -9,8 +9,15 @@ def send_js():
 
 def get_api(app):
     api = Api(app, doc=False)
-    api.add_resource(ModelResource, '%s/<string:model_name>/' % app.crudcast_config['swagger']['basePath'])
-    api.add_resource(InstanceResource, '%s/<string:model_name>/<string:_id>/' % app.crudcast_config['swagger']['basePath'])
+
+    mr = ModelResource
+    mr.set_app(app)
+
+    ir = InstanceResource
+    ir.set_app(app)
+
+    api.add_resource(mr, '%s/<string:model_name>/' % app.crudcast_config['swagger']['basePath'])
+    api.add_resource(ir, '%s/<string:model_name>/<string:_id>/' % app.crudcast_config['swagger']['basePath'])
 
 
 

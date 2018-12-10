@@ -29,7 +29,10 @@ setup(
         'MarkupSafe==1.1.0',
         'pymongo==3.7.2',
         'PyYAML==3.13',
-        'Werkzeug==0.14.1'
+        'Werkzeug==0.14.1',
+        'flask_swagger_ui==3.18.0',
+        'flask_restplus==0.12.1',
+        'sphinx_press_theme==0.1.1',
     ],
     entry_points={
         'console_scripts': ['crudcast=crudcast.entrypoint:main'],
