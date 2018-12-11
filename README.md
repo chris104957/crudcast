@@ -1,4 +1,6 @@
-# crudcast
+# Crudcast
+
+[![Coverage Status](https://coveralls.io/repos/github/chris104957/crudcast/badge.svg?branch=02-unit-tests)](https://coveralls.io/github/chris104957/crudcast?branch=02-unit-tests)
 
 Crudcast lets you build a fully functioning and OpenAPI-compliant CRUD API with a few lines of YAML code. It lets you create a fully-functional web app backend for prototyping purposes
 
