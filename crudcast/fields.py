@@ -1,5 +1,5 @@
 from datetime import datetime
-from .exceptions import ValidationError
+from exceptions import ValidationError
 from pymongo.collection import ObjectId
 from bson.errors import InvalidId
 from werkzeug.exceptions import NotFound
@@ -170,7 +170,7 @@ class AutoField(AutoBaseField):
         if _id:
             return self.get_original(_id)
         else:
-            return self.model.collection.find().count() + 1
+            return self.model.collection.find({}).count() + 1
 
 
 class AutoDateTimeField(AutoBaseField):
@@ -229,7 +229,7 @@ class ForeignKeyField(BaseField):
         :param related_model_name: the name of another model in the app
         :rtype: crudcast.models.Model
         """
-        from .models import Model
+        from models import Model
         return Model(name=related_model_name, app=self.model.app)
 
     def __init__(self, name, model, **options):

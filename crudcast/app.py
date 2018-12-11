@@ -2,7 +2,7 @@ import pymongo
 from yaml import load
 from flask import Flask
 from flask_swagger_ui import get_swaggerui_blueprint
-from .models import Model
+from models import Model
 
 
 class CrudcastApp(Flask):
@@ -56,7 +56,7 @@ class CrudcastApp(Flask):
             m = {
                 'name': model_name,
                 'collection': self.db[model_name],
-                'fields': options.pop('fields', []),
+                'fields': options.pop('fields', {}),
                 'options': options
             }
             self.models[model_name] = m

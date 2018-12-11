@@ -7,10 +7,12 @@ before_install:
 install:
   - python setup.py sdist
   - pip install --upgrade dist/*
+  - pip install coverage coveralls
 script:
-  - ls -la # coverage run run_tests.py
-#after_success:
-#  - coveralls
+  - ls -la
+  - coverage run --source=crudcast -m unittest discover -s crudcast/
+after_success:
+  - coveralls
 deploy:
   - provider: pypi
     user: "chris140957"

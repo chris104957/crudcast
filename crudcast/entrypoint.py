@@ -1,7 +1,7 @@
-from .api import get_api
+from api import get_api
 import argparse
-from .app import CrudcastApp
-from .exceptions import ValidationError, handle_invalid_usage
+from app import CrudcastApp
+from exceptions import ValidationError, handle_invalid_usage
 import json
 
 SWAGGER_URL = '/api/docs'  # URL for exposing Swagger UI (without trailing '/')
