@@ -1,6 +1,9 @@
 # Crudcast
 
 [![Coverage Status](https://coveralls.io/repos/github/chris104957/crudcast/badge.svg?branch=02-unit-tests)](https://coveralls.io/github/chris104957/crudcast?branch=02-unit-tests)
+[![Build Status](https://travis-ci.org/chris104957/crudcast.svg?branch=master)](https://travis-ci.org/chris104957/crudcast)
+[![Documentation Status](https://readthedocs.org/projects/crudcast/badge/?version=latest)](https://crudcast.readthedocs.io/en/latest/?badge=latest)
+
 
 Crudcast lets you build a fully functioning and OpenAPI-compliant CRUD API with a few lines of YAML code. It lets you create a fully-functional web app backend for prototyping purposes
 
