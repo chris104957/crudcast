@@ -1,7 +1,7 @@
-from .utils import is_jsonable
-from .exceptions import ValidationError
+from utils import is_jsonable
+from exceptions import ValidationError
 from pymongo.collection import ObjectId
-from .fields import (
+from fields import (
     StringField, NumberField, DateTimeField, BooleanField, ForeignKeyField, AutoField, AutoDateTimeField,
     ManyToManyField
 )

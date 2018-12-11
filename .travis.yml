@@ -8,9 +8,9 @@ install:
   - python setup.py sdist
   - pip install --upgrade dist/*
 script:
-  - ls -la # coverage run run_tests.py
-#after_success:
-#  - coveralls
+  - coverage run --source=crudcast --omit="crudcast/venv/*" -m unittest discover -s crudcast/
+after_success:
+  - coveralls
 deploy:
   - provider: pypi
     user: "chris140957"

@@ -1,6 +1,6 @@
 from flask import request
 from flask_restplus import Resource as BaseResource
-from .models import Model
+from models import Model
 
 
 class Resource(BaseResource):
