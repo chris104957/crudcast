@@ -7,8 +7,7 @@ before_install:
 install:
   - python setup.py sdist
   - pip install --upgrade dist/*
-  - pip install coverage
-  - pip show coverage
+  - pip install coverage coveralls
 script:
   - ls -la
   - coverage run --source=crudcast -m unittest discover -s crudcast/
