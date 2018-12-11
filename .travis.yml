@@ -8,6 +8,7 @@ install:
   - python setup.py sdist
   - pip install --upgrade dist/*
   - pip install coverage
+  - pip show coverage
 script:
   - ls -la
   - coverage run --source=crudcast -m unittest discover -s crudcast/
