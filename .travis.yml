@@ -9,7 +9,8 @@ install:
   - pip install --upgrade dist/*
   - pip install coverage
 script:
-  - coverage run --source=crudcast --omit="crudcast/venv/*" -m unittest discover -s crudcast/
+  - ls -la
+  - coverage run --source=crudcast -m unittest discover -s crudcast/
 after_success:
   - coveralls
 deploy:
