@@ -3,3 +3,4 @@ venv
 config.yml
 dist
 crudcast.egg-info
+docs/build/*

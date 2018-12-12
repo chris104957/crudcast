@@ -65,6 +65,7 @@ Your API is now running on port 5000
 
 .. _here: crudcast_command.rst
 
+
 Using your app
 --------------
 
@@ -74,3 +75,47 @@ you'll be able to see how it works, and test it, using the Swagger view created 
 .. code-block:: bash
 
     http://localhost:5000/api/docs
+
+Adding users and authentication
+-------------------------------
+
+Crudcast also provides an out of the box solution for managing users and basic authentication. To turn on the user
+module, simply add the line `users:` to your `config.yml` as a root element
+
+.. code-block:: yaml
+
+    models:
+        # model definitions go here
+        ...
+
+    users: <= this line
+
+Adding this option will create routes for creating, viewing, updating and deleting users. These routes will be
+documented in the swagger view. However, keep in mind that in order to user these routes, you need to be
+authenticated. You therefore need to create a user using the command line, before you can use them:
+
+.. code-block:: bash
+
+    crudcast --create-user
+
+    Enter a username: chris
+    Enter password:
+    Confirm password:
+
+You can now use the above user to create other users via the API.
+
+To require users to authenticate in order to access other routes, simply annotate your models as follows:
+
+.. code-block:: yaml
+
+    models:
+      thing:
+        fields:
+          name:
+
+        auth_type: basic
+
+The above will ensure that you must be authenticated using Basic authorization in order to access all `thing` routes
+
+.. note::
+    More auth types will be added in future versions of crudcast
