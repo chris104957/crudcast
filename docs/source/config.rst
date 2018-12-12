@@ -32,7 +32,6 @@ Models
 
 Here is a very simple configuration that generates two different objects - `person` and `address`:
 
-
 .. code-block:: yaml
 
     models:
@@ -86,7 +85,6 @@ another model. This allows our app to link `person` objects with `address` objec
 
 .. _fields: fields.rst
 
-
 Database configuration
 ----------------------
 
@@ -102,6 +100,37 @@ what to call the database. It can be set like as follows:
     The above example shows the default values. If you do not set these values, the above
     MongoDB configuration would still apply
 
+Users
+-----
+
+To enable the user model, add `users:` to the top level of your `config.yml`:
+
+.. code-block:: yaml
+
+    users:
+
+This parameter does not currently support any additional options
+
+Authentication
+--------------
+
+You can require users to authenticate using basic auth to access the routes of a specific model by adding
+`auth_type: basic` to your model config
+
+.. code-block:: yaml
+
+    models:
+      thing:
+        fields:
+          name:
+
+        auth_type: basic
+
+This will ensure that all users must be logged in to access the `thing` routes.
+
+.. warning::
+    Setting an `auth_type` while not enabling the `user` model (see above) will cause your routes to be
+    completely inaccessible
 
 Documenting your API
 --------------------

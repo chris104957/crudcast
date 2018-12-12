@@ -1,11 +1,12 @@
-from utils import is_jsonable
-from exceptions import ValidationError
+from crudcast.utils import is_jsonable
+from crudcast.exceptions import ValidationError
 from pymongo.collection import ObjectId
-from fields import (
+from crudcast.fields import (
     StringField, NumberField, DateTimeField, BooleanField, ForeignKeyField, AutoField, AutoDateTimeField,
     ManyToManyField
 )
 from flask import abort
+from crudcast.authentication import BasicAuth
 
 
 class Model(object):
@@ -39,7 +40,7 @@ class Model(object):
             'foreignkey': ForeignKeyField,
             'autofield': AutoField,
             'auto_datetime': AutoDateTimeField,
-            'manytomany': ManyToManyField
+            'manytomany': ManyToManyField,
         }
 
         for field_name, options in fields.items():
@@ -66,13 +67,14 @@ class Model(object):
         if not data:
             data = {}
 
-        # ensure that required fields are supplied
-        required_fields = [field.name for field in self.fields if field.required]
-        for f in required_fields:
-            try:
-                assert f in data.keys()
-            except AssertionError:
-                raise ValidationError('This field is required', field=f)
+        # ensure that required fields are supplied, if creating
+        if not _id:
+            required_fields = [field.name for field in self.fields if field.required]
+            for f in required_fields:
+                try:
+                    assert f in data.keys()
+                except AssertionError:
+                    raise ValidationError('This field is required', field=f)
 
         # ensure that all input fields are valid field names
         for key, val in data.items():
@@ -149,3 +151,14 @@ class Model(object):
             return {}
         else:
             abort(404)
+
+    def get_auth_type(self):
+        """
+        Returns an auth class for the model, if any
+        """
+        mappings = {
+            'basic': BasicAuth
+        }
+        auth_type = self.app.models[self.name]['options'].get('auth_type')
+        if auth_type:
+            return mappings.get(auth_type)

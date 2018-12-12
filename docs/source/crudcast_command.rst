@@ -68,3 +68,20 @@ disable this behaviour, use the following command
 .. code-block:: bash
 
     crudcast --no-load-dotenv
+
+Creating users
+**************
+
+If you have enable the `users` model, you can create new users via the command line, as follows:
+
+.. code-block:: bash
+
+    crudcast --create-user
+
+    Enter a username: chris
+    Enter password:
+    Confirm password:
+
+
+.. note::
+    Using this switch doesn't start the server - it will just exit once the user has been created

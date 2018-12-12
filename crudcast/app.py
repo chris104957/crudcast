@@ -2,7 +2,8 @@ import pymongo
 from yaml import load
 from flask import Flask
 from flask_swagger_ui import get_swaggerui_blueprint
-from models import Model
+from crudcast.models import Model
+from crudcast.users import User
 
 
 class CrudcastApp(Flask):
@@ -13,6 +14,8 @@ class CrudcastApp(Flask):
     :param config_file: Local path to a valid `config.yml`
     :param kwargs: additional arguments to be passed to Flask
     """
+    user_manager = None
+
     crudcast_config = {
         # database
         "mongo_url": "mongodb://localhost:27017/",
@@ -28,10 +31,16 @@ class CrudcastApp(Flask):
                 'version': '1.0.0',
                 'title': 'My Crudcast app'
             }
-        }
+        },
     } #: this is the default crudcast config. Any options supplied in your `config.yml` will overwrite these
 
     models = {}
+    user_config = {
+        'fields': {},
+        'options': {
+            'auth_type': 'basic'
+        }
+    }
 
     client = None
     db = None
@@ -52,14 +61,31 @@ class CrudcastApp(Flask):
         self.client = pymongo.MongoClient(self.crudcast_config['mongo_url'])
         self.db = self.client[self.crudcast_config['db_name']]
 
-        for model_name, options in options['models'].items():
+        users = options.get('users')
+        if not users:
+            users = {}
+
+        for key, val in users.items():
+            self.user_config[key] = val
+
+        if 'users' in options.keys():
+            self.crudcast_config['users'] = users
+
+        for model_name, model_options in options['models'].items():
             m = {
                 'name': model_name,
                 'collection': self.db[model_name],
-                'fields': options.pop('fields', {}),
-                'options': options
+                'fields': model_options.pop('fields', {}),
+                'options': model_options
             }
             self.models[model_name] = m
+            if 'users' in options.keys():
+                self.models['user'] = {
+                    'name': 'user',
+                    'collection': self.db['user'],
+                    'fields': self.user_config['fields'],
+                    'options': self.user_config['options']
+                }
 
     def get_tag(self, model):
         """
@@ -82,13 +108,16 @@ class CrudcastApp(Flask):
         """
         parameters = []
 
+        auth_type = model.options.get('auth_type')
+
         for field in model.fields:
             parameter = {
                 'name': field.name,
                 'in': 'query',
                 'description': 'Filter for %s objects based on %s' % (model.name, field.name),
-                'required': False
+                'required': False,
             }
+
             parameters.append(parameter)
 
         post_parameters = [
@@ -117,7 +146,12 @@ class CrudcastApp(Flask):
                             '$ref': '#/definitions/%s' % model.name
                         }
                     }
-                }
+                },
+                'security': [
+                    {
+                        'basicAuth': []
+                    }
+                ] if auth_type else []
             },
             'post': {
                 'tags': [model.name],
@@ -132,7 +166,12 @@ class CrudcastApp(Flask):
                             '$ref': '#/definitions/%s' % model.name
                         }
                     }
-                }
+                },
+                'security': [
+                    {
+                        'basicAuth': []
+                    }
+                ] if auth_type else []
             }
         }
 
@@ -243,6 +282,13 @@ class CrudcastApp(Flask):
             }
         }
 
+    def get_security_definitions(self):
+        return {
+                'basicAuth': {
+                    'type': 'basic',
+                }
+        }
+
     @property
     def swagger_config(self):
         """
@@ -266,6 +312,10 @@ class CrudcastApp(Flask):
         config['paths'] = paths
         config['definitions'] = definitions
 
+        if self.user_manager:
+            config['securityDefinitions'] = self.get_security_definitions()
+
+        print(config)
         return config
 
     def get_swagger_ui_view(self):
@@ -281,6 +331,10 @@ class CrudcastApp(Flask):
 
     def __init__(self, import_name, config_file, **kwargs):
         self.set_crudcast_config(config_file)
+
+        if 'users' in self.crudcast_config.keys():
+            self.user_manager = User(app=self, **self.crudcast_config['users'])
+
         super().__init__(import_name, **kwargs)
 
 
