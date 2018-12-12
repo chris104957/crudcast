@@ -5,7 +5,7 @@
 [![Documentation Status](https://readthedocs.org/projects/crudcast/badge/?version=latest)](https://crudcast.readthedocs.io/en/latest/?badge=latest)
 
 
-Crudcast lets you build a fully functioning and OpenAPI-compliant CRUD API with a few lines of YAML code.
+Crudcast lets you build a fully functioning and OpenAPI-compliant CRUD API with basic auth/user management with a few lines of YAML code.
 
 ## Installation
 
