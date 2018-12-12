@@ -5,7 +5,7 @@
 [![Documentation Status](https://readthedocs.org/projects/crudcast/badge/?version=latest)](https://crudcast.readthedocs.io/en/latest/?badge=latest)
 
 
-Crudcast lets you build a fully functioning and OpenAPI-compliant CRUD API with a few lines of YAML code. It lets you create a fully-functional web app backend for prototyping purposes
+Crudcast lets you build a fully functioning and OpenAPI-compliant CRUD API with a few lines of YAML code.
 
 ## Installation
 
@@ -55,8 +55,8 @@ Roadmap
 
 Crudcast is brand new and only has a small percentage of the intended functionality so far. In future, I am planning to add support for:
 
-- user management and authentication (basic, token-based and social)
-- permissions
+- More authentication methods (OAuth, Token auth, etc)
+- Advanced permissions
 - inserting your own code - either for validation, permissions or creating your own methods
 
 If there is any other functionality you'd like to see added, then please raise an issue
