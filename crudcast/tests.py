@@ -52,10 +52,6 @@ class CrudCastTestCase(unittest.TestCase):
     def test_entrypoint(self, *args):
         with mock.patch("builtins.open", mock.mock_open(read_data=json.dumps(crudcast_config))):
             from entrypoint import main
-            with self.assertRaises(StopIteration):
-                main()
-
-        with self.assertRaises(ArgumentError):
             main()
 
     def test_exceptions(self, *args,):

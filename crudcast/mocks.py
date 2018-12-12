@@ -18,8 +18,12 @@ class MockCollection(object):
 
 
 class MockApp(object):
+    user_manager = None
     handle_exception = None
     handle_user_exception = None
+
+    def run(self, *args, **kwargs):
+        pass
 
     extensions = {}
     config = {}
@@ -35,11 +39,23 @@ class MockApp(object):
         }
     }
 
-    def register_blueprint(self):
+    def route(self, *args, **kwargs):
+        return lambda x: print(x)
+
+    def register_blueprint(self, *args, **kwargs):
+        pass
+
+    def register_error_handler(self, *args, **kwargs):
         pass
 
     @classmethod
     def add_url_rule(rule, *args, **kwargs):
+        pass
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    def get_swagger_ui_view(self, *args, **kwargs):
         pass
 
 
@@ -50,6 +66,7 @@ class MockArgs(object):
     debug = False
     host = '0.0.0.0'
     no_load_dotenv = False
+    create_admin = False
 
 
 class MockParser(object):
