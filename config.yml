@@ -6,6 +6,8 @@ models:
         type: manytomany
         to: author
 
+    auth_type: basic
+
   author:
     fields:
       name:
@@ -16,3 +18,5 @@ models:
       author:
         type: foreignkey
         to: author
+
+users:

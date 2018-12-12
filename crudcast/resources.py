@@ -1,6 +1,7 @@
 from flask import request
 from flask_restplus import Resource as BaseResource
-from models import Model
+from crudcast.models import Model
+from crudcast.users import User
 
 
 class Resource(BaseResource):
@@ -9,6 +10,13 @@ class Resource(BaseResource):
     model creation
     """
     app = None
+    model = None
+
+    def check_auth(self):
+        auth_type = self.model.get_auth_type()
+        print(self.model)
+        if auth_type:
+            return auth_type.authenticate(request=request, user=self.app.user_manager)
 
     @classmethod
     def set_app(cls, app):
@@ -31,8 +39,9 @@ class ModelResource(Resource):
         :param model_name: the name of the model, as it appears in the config file
         :return: a list of instances of the model object
         """
-        model = Model(model_name, self.app)
-        return model.to_repr(**request.args)
+        self.model = Model(model_name, self.app)
+        user = self.check_auth()
+        return self.model.to_repr(**request.args)
 
     def post(self, model_name):
         """
@@ -41,8 +50,9 @@ class ModelResource(Resource):
         :param model_name: the name of the model, as it appears in the config file
         :return: details of the created instance
         """
-        model = Model(model_name, self.app)
-        response = model.create(request.json)
+        self.model = Model(model_name, self.app)
+        user = self.check_auth()
+        response = self.model.create(request.json)
         return response
 
 
@@ -58,8 +68,9 @@ class InstanceResource(Resource):
         :param _id: MongoDB _id string
         :return: the MongoDB document
         """
-        model = Model(model_name, self.app)
-        instance = model.retrieve(_id)
+        self.model = Model(model_name, self.app)
+        user = self.check_auth()
+        instance = self.model.retrieve(_id)
         return instance
 
     def put(self, model_name, _id):
@@ -71,8 +82,9 @@ class InstanceResource(Resource):
         :return: the MongoDB document
         """
 
-        model = Model(model_name, self.app)
-        instance = model.update(_id=_id, data=request.json)
+        self.model = Model(model_name, self.app)
+        user = self.check_auth()
+        instance = self.model.update(_id=_id, data=request.json)
         return instance
 
     def delete(self, model_name, _id):
@@ -83,9 +95,70 @@ class InstanceResource(Resource):
         :param _id: MongoDB _id string
         """
 
-        model = Model(model_name, self.app)
-        instance = model.delete(_id=_id)
+        self.model = Model(model_name, self.app)
+        user = self.check_auth()
+        instance = self.model.delete(_id=_id)
         return instance
 
 
+class UserModelResource(Resource):
+    def get(self):
+        """
+        Lists all users
 
+        :return: a list of instances of the user object
+        """
+        self.model = User(self.app)
+        user = self.check_auth()
+        return self.model.to_repr(**request.args)
+
+    def post(self):
+        """
+        Create a user
+
+        :return: details of the created user
+        """
+        self.model = User(self.app)
+        user = self.check_auth()
+        return self.model.create(request.json)
+
+
+class UserInstanceResource(Resource):
+    """
+    Instance level resources - implements all REST methods for paths with an ID
+    """
+    def get(self, _id):
+        """
+        Retrieve a single instance by its ID
+
+        :param _id: MongoDB _id string
+        :return: the MongoDB document
+        """
+        self.model = User(self.app)
+        print('manager', self.app.user_manager)
+        user = self.check_auth()
+        return self.model.retrieve(_id)
+
+    def put(self, _id):
+        """
+        Update a single instance by its ID
+
+        :param model_name: the name of the model, as it appears in the config file
+        :param _id: MongoDB _id string
+        :return: the MongoDB document
+        """
+
+        self.model = User(self.app)
+        user = self.check_auth()
+        return self.model.update(_id=_id, data=request.json)
+
+    def delete(self, _id):
+        """
+        Delete a single instance by its ID
+
+        :param _id: MongoDB _id string
+        """
+
+        self.model = User(self.app)
+        user = self.check_auth()
+        return self.model.delete(_id=_id)

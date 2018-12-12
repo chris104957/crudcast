@@ -33,6 +33,8 @@ setup(
         'flask_swagger_ui==3.18.0',
         'flask_restplus==0.12.1',
         'sphinx_press_theme==0.1.1',
+        'passlib==1.7.1',
+        'bcrypt==3.1.5'
     ],
     entry_points={
         'console_scripts': ['crudcast=crudcast.entrypoint:main'],

@@ -1,5 +1,5 @@
 from datetime import datetime
-from exceptions import ValidationError
+from crudcast.exceptions import ValidationError
 from pymongo.collection import ObjectId
 from bson.errors import InvalidId
 from werkzeug.exceptions import NotFound
@@ -229,7 +229,7 @@ class ForeignKeyField(BaseField):
         :param related_model_name: the name of another model in the app
         :rtype: crudcast.models.Model
         """
-        from models import Model
+        from crudcast.models import Model
         return Model(name=related_model_name, app=self.model.app)
 
     def __init__(self, name, model, **options):
