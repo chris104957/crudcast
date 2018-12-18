@@ -119,3 +119,29 @@ The above will ensure that you must be authenticated using Basic authorization i
 
 .. note::
     More auth types will be added in future versions of crudcast
+
+Adding custom methods
+---------------------
+
+It's also possible to create API methods with your own custom code - methods can be defined as follows:
+
+.. code-block:: yaml
+
+    methods:
+    - path: say-hello/<string:arg1>
+      resource: HelloResource
+      file: hello.py
+
+`hello.py`:
+
+.. code-block:: python
+
+    from crudcast.resources import Resource
+
+    class HelloResource(Resource):
+        def get(self, arg1):
+            return {'hello': arg1}
+
+The above will create an additional route as `basePath/say-hello/{arg1}` which returns a simple response. For more
+help on this function, see `extra_methods`_
+

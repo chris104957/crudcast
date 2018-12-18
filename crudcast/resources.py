@@ -14,7 +14,6 @@ class Resource(BaseResource):
 
     def check_auth(self):
         auth_type = self.model.get_auth_type()
-        print(self.model)
         if auth_type:
             return auth_type.authenticate(request=request, user=self.app.user_manager)
 

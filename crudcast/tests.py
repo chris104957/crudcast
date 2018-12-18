@@ -9,7 +9,6 @@ from models import Model
 from api import get_api
 from app import CrudcastApp
 import json
-from argparse import ArgumentError
 from datetime import datetime
 
 
@@ -45,7 +44,7 @@ class CrudCastTestCase(unittest.TestCase):
             self.assertEqual(app.swagger_config['swagger'], '2.0')
 
             with mock.patch('flask_swagger_ui.get_swaggerui_blueprint'):
-                print(app.get_swagger_ui_view())
+                app.get_swagger_ui_view()
 
     @mock.patch('crudcast.app.CrudcastApp', MockApp)
     @mock.patch('argparse.ArgumentParser', MockParser)
@@ -57,7 +56,7 @@ class CrudCastTestCase(unittest.TestCase):
     def test_exceptions(self, *args,):
         from crudcast.exceptions import handle_invalid_usage, ValidationError
         with self.assertRaises(RuntimeError):
-            print(handle_invalid_usage(ValidationError('test', status_code=415)))
+            handle_invalid_usage(ValidationError('test', status_code=415))
 
     def test_fields(self):
         f = BaseField(name='test', model=MockModel(), unique=True)
@@ -141,3 +140,14 @@ class CrudCastTestCase(unittest.TestCase):
 
         with self.assertRaises(Exception):
             model.update(_id='507f1f77bcf86cd799439011', data={})
+
+    def test_methods(self):
+        from crudcast.methods import Method
+        from crudcast.resources import Resource
+        import os
+        root = os.path.abspath(os.path.join(__file__, os.pardir))
+        file = os.path.join(root, 'mocks.py')
+
+        method = Method(file, '/test/<string:arg1>', 'mocks.TestResource')
+        _cls = method.get_resource()
+        self.assertTrue(issubclass(_cls, Resource))
