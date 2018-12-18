@@ -45,8 +45,11 @@ crudcast
 ```
 Go to `http://localhost:5000/api/docs` to see your documented and fully-functional API
 
-Documentation
----
+Next steps
+----------
+
+Crudcast also allows you to protect your routes with authentication,
+and even create additional API routes by inserting your own Python code
 
 Please go to http://crudcast.rtfd.io/ for the full docs
 
@@ -57,6 +60,6 @@ Crudcast is brand new and only has a small percentage of the intended functional
 
 - More authentication methods (OAuth, Token auth, etc)
 - Advanced permissions
-- inserting your own code - either for validation, permissions or creating your own methods
+- Custom validation/permissions
 
 If there is any other functionality you'd like to see added, then please raise an issue
