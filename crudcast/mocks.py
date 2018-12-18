@@ -1,3 +1,6 @@
+from crudcast.resources import Resource
+
+
 class MockApi(object):
     pass
 
@@ -17,10 +20,16 @@ class MockCollection(object):
         self.count = kwargs.get('count', 0)
 
 
+class MockMethod(object):
+    def __init__(self, *args, **kwargs):
+        pass
+
+
 class MockApp(object):
     user_manager = None
     handle_exception = None
     handle_user_exception = None
+    methods = {}
 
     def run(self, *args, **kwargs):
         pass
@@ -93,14 +102,10 @@ class MockDocument(object):
         for item in self.items():
             yield item
 
-
     def count(self):
         return self._count
 
     inserted_id = '507f1f77bcf86cd799439011'
-
-
-
 
 
 class MockModel(object):
@@ -134,3 +139,8 @@ class MockMongo(object):
 
     def __init__(self, *args, **kwargs):
         pass
+
+
+class TestResource(Resource):
+    def get(self):
+        return {'hello': True}

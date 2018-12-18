@@ -4,6 +4,8 @@ from flask import Flask
 from flask_swagger_ui import get_swaggerui_blueprint
 from crudcast.models import Model
 from crudcast.users import User
+from crudcast.methods import Method
+import os
 
 
 class CrudcastApp(Flask):
@@ -35,6 +37,7 @@ class CrudcastApp(Flask):
     } #: this is the default crudcast config. Any options supplied in your `config.yml` will overwrite these
 
     models = {}
+    methods = {}
     user_config = {
         'fields': {},
         'options': {
@@ -55,7 +58,7 @@ class CrudcastApp(Flask):
             options = load(f.read())
 
         for key, val in options.items():
-            if key != 'models':
+            if key not in ['models', 'methods']:
                 self.crudcast_config[key] = val
 
         self.client = pymongo.MongoClient(self.crudcast_config['mongo_url'])
@@ -86,6 +89,10 @@ class CrudcastApp(Flask):
                     'fields': self.user_config['fields'],
                     'options': self.user_config['options']
                 }
+
+        for method in options.get('methods', []):
+            file = os.path.abspath(method.pop('file'))
+            self.methods[method['path']] = Method(file=file, **method)
 
     def get_tag(self, model):
         """
@@ -308,6 +315,9 @@ class CrudcastApp(Flask):
             paths['/%s/{_id}/' % model_name] = self.get_instance_path(model)
             definitions[model.name] = self.get_definition(model)
 
+        for method_path, method in self.methods.items():
+            paths['/' + method_path] = method.swagger_definition
+
         config['tags'] = tags
         config['paths'] = paths
         config['definitions'] = definitions
@@ -315,7 +325,6 @@ class CrudcastApp(Flask):
         if self.user_manager:
             config['securityDefinitions'] = self.get_security_definitions()
 
-        print(config)
         return config
 
     def get_swagger_ui_view(self):

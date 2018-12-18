@@ -19,4 +19,12 @@ models:
         type: foreignkey
         to: author
 
+methods:
+  - path: say-hello/<string:arg1>
+    resource: HelloResource
+    file: hello.py
+    swagger:
+      get:
+        summary: a summary
+
 users:
